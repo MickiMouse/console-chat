@@ -1,0 +1,9 @@
+blocking/
+socket_server/
+tcp/
+udp/
+venv/
+.idea/
+__pycache__/
+*.py[cod]
+*.pyc
