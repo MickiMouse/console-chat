@@ -20,19 +20,24 @@ class Server:
         return self
 
     def client_thread(self, conn, addr):
-        print('Connected client: ', addr)
+        print('Connected client:', addr)
         with conn:
             while True:
                 message = conn.recv(self.buffer)
+                if message.decode() == '':
+                    break
                 sys.stdout.write(message.decode())
                 for client, address in self.__clients:
                     if address != addr:
-                        client.send(message)
+                        result = f'{addr} >> {message.decode().strip()}\n'.encode()
+                        client.send(result)
+            self.__clients.remove((conn, addr))
 
     def run(self):
         self.__sock.listen(self.backlog)
         while True:
             client, address = self.__sock.accept()
+            client.send(b'Welcome to the chat!\n')
             self.__clients.append((client, address))
             thread = threading.Thread(target=self.client_thread, args=(client, address))
             thread.start()

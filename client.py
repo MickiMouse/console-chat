@@ -22,18 +22,16 @@ class Client:
                 message = sock.recv(self.bufsize)
                 sys.stdout.write(message.decode())
 
-    @staticmethod
-    def prompt():
-        sys.stdout.write('You: >> ')
-        sys.stdout.flush()
-
     def run(self):
         with self.connect() as sock:
             while True:
-                thread = threading.Thread(target=self.receive_messages)
-                thread.start()
-                message = sys.stdin.readline()
-                sock.send(message.encode())
+                try:
+                    thread = threading.Thread(target=self.receive_messages)
+                    thread.start()
+                    message = sys.stdin.readline()
+                    sock.send(message.encode())
+                except KeyboardInterrupt:
+                    break
 
     def disconnect(self):
         self.__sock.close()
